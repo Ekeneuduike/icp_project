@@ -1,3 +1,60 @@
+type FileType = record { file : blob; file_type : text };
+
+type NFTData = record {
+  id : nat64;
+  collections_id : nat64;
+  creator : text;
+  owner : text;
+  metadata : FileType;
+  name : text;
+};
+
+type NftCollection = record {
+  creator : text;
+  supply_cap : nat64;
+  burn_account : text;
+  logo : FileType;
+  name : text;
+  nfts : vec NFTData;
+  description : text;
+  symbol : text;
+};
+
+type NftListing = record {
+  nft : NFTData;
+  owner : text;
+  bids : vec record { text; nat64 };
+  price : nat64;
+};
+
+type Product = record {
+  img : FileType;
+  total_amount : opt nat64;
+  name : opt text;
+  product_type : opt text;
+  brand : opt text;
+  price : opt nat64;
+  profit_margin : opt nat16;
+  branding_nft : opt NFTData;
+};
+
+type Status = variant { User; Brand; Creator };
+
+type UserInfo = record { status : Status; name : text; user : text };
+
 service : {
-    "greet": (text) -> (text) query;
+  "bid_nft" : (nat64, nat64, text) -> ();
+  "buy_nft" : (nat64, text) -> ();
+  "buy_product" : (nat64, nat64, text) -> ();
+  "create_nft_collection" : (NftCollection, text) -> ();
+  "get_collection_nfts" : (text, nat64) -> (opt vec NFTData) query;
+  "get_listed_nfts" : () -> (opt vec NftListing) query;
+  "get_user_collection" : (text) -> (vec NftCollection) query;
+  "get_user_nfts" : (text) -> (vec NFTData) query;
+  "get_user_role" : (text) -> (opt Status) query;
+  "list_nft" : (NFTData, nat64, text) -> ();
+  "list_product" : (Product, text) -> ();
+  "mint_into_collection" : (nat64, NFTData, text) -> ();
+  "rent_nft" : (nat64, text) -> ();
+  "signup" : (UserInfo) -> ();
 }
